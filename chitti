@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Chitti Calculator</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        .main {
+          margin: 10px auto;
+			    padding: 10px;
+			    box-sizing: border-box;
+			    max-width: 500px;
+        }
+        .numinput {
+          margin: 10px 0;
+          width: 100%;
+          box-sizing: border-box;
+        }
+        .numinput label {
+			    margin: 2px;
+          width: 100%;
+        }
+        .numinput input {
+          width: 100%;
+          padding: 10px;
+          margin: 2px 0;
+          box-sizing: border-box;
+        }
+		    .main button {
+			    margin: 15px 0;
+			    padding: 10px;
+			    width: 98%;
+		    }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <div class="numinput">
+            <label for="chitti">Chitti</label>
+            <input type="number" name="chitti" id="chitti" value="100000" />
+        </div>
+        <div class="numinput">
+            <label for="iteration">Iteration</label>
+            <input type="number" name="iteration" id="iteration" value="1" />
+        </div>
+        <div class="numinput">
+            <label for="paata">Paata</label>
+            <input type="number" name="paata" id="paata" value="0" />
+        </div>
+		<div class="numinput">
+            <input type="button" value="CALCULATE" onClick="calc()" />
+        </div>
+        <div class="numinput">
+            <label for="amount">Amount</label>
+            <input readonly id="amount">
+        </div>
+    </div>
+</body>
+<script>
+    function calc() {
+        var chitti = document.getElementById("chitti").valueAsNumber;
+        var iteration = document.getElementById("iteration").valueAsNumber;
+        var paata = document.getElementById("paata").valueAsNumber;
+        var amt = chitti - ((chitti * 2) + paata) / (12 - iteration);
+        document.getElementById("amount").value = amt;
+    }
+</script>
+</html>
