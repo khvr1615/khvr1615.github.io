@@ -38,22 +38,22 @@
     <div class="main">
         <div class="numinput">
             <label for="chitti">Chitti</label>
-            <input type="number" name="chitti" id="chitti" value="100000" />
+            <input type="number" name="chitti" id="chitti" value="0" min="0" step="1" />
         </div>
         <div class="numinput">
             <label for="iteration">Iteration</label>
-            <input type="number" name="iteration" id="iteration" value="1" />
+            <input type="number" name="iteration" id="iteration" value="1" min="1" step="1" max="11" />
         </div>
         <div class="numinput">
             <label for="paata">Paata</label>
-            <input type="number" name="paata" id="paata" value="0" />
+            <input type="number" name="paata" id="paata" value="0" min="0" step="1" />
         </div>
 	    <div class="numinput">
             <input type="button" value="CALCULATE" onClick="calc()" />
         </div>
         <div class="numinput">
             <label for="amount">Amount</label>
-            <input readonly id="amount">
+            <input readonly id="amount" value="0">
         </div>
     </div>
 </body>
