@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Essar Petrol Bunk</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		.main {
+			margin: 10px auto;
+			padding: 10px;
+			box-sizing: border-box;
+			max-width: 500px;
+		}
+		.numinput {
+			margin: 10px 0;
+			width: 100%;
+			box-sizing: border-box;
+		}
+		.numinput input {
+			width: 100%;
+			padding: 10px;
+			margin: 2px 0;
+			box-sizing: border-box;
+		}
+	</style>
+</head>
+<body>
+	<div class="main">
+		<p>
+			Essar Petrol Bunk <br />
+			Narasareddy Filling Station <br />
+			Rayapur Kandly, Lokeshwaram, Nirmal <br />
+		</p>
+		<div class="numinput">
+			<input type="button" value="PAY TO PETROL BUNK" onClick="pay()" />
+		</div>
+	</div>
+</body>
+<script>
+	function pay(){
+		var upilink = "upi://pay?pa=Q85277117@ybl&pn=NARASAREDDY%20FILLING%20STATION";
+		window.open(upilink);
+	}
+</script>
+</html>
