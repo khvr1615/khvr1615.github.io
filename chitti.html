@@ -22,7 +22,6 @@
 		}
 		.num_field label {
 			margin: 2px;
-			width: 100%;
 		}
 		.num_field label span {
 			font-style: italic;
@@ -30,7 +29,7 @@
 		}
 		.rofv {
 			float: right;
-			display: inline-block;
+			display: block;
 		}
 		.num_field input {
 			width: 100%;
@@ -54,20 +53,18 @@
 			pfv = document.getElementById("pfv");
 			prfv = document.getElementById("prfv");
 			toRupees = Intl.NumberFormat("en-IN");
+			premium.value = "";
+			month.value = "";
+			paata.value = "";
 		}
 		function calc() {
-			pov = Number(premium.value.replaceAll(/,/g,''));
-			mv = Number(month.value);
-			pv = Number(paata.value.replaceAll(/,/g,''));
+			var pov = Number(premium.value);
+			var mv = Number(month.value);
+			var pv = Number(paata.value);
+			pofv.innerText = "Rs. " + toRupees.format(pov);
+			mfv.innerText = "" + mv;
+			pfv.innerText = "Rs. " + toRupees.format(pv);
 			prfv.innerText = "Rs. " + toRupees.format(pov - ((pov * 2) + pv) / (12 - mv));
-		}
-		function formatAmt(e) {
-			e.target.previousElementSibling.innerText = "Rs. " + toRupees.format(e.target.value.replace(/,/g,''));
-			calc();
-		}
-		function formatNum(e){
-			e.target.previousElementSibling.innerText = Number(e.target.value.replace(/,/g,''));
-			calc();
 		}
 	</script>
 </head>
@@ -77,21 +74,21 @@
 		<div class="num_field">
 			<label for="premium">Premium <span>(Original)</span></label>
 			<span id="pofv" class="rofv">Rs. 0</span>
-			<input type="number" name="premium" id="premium" value="" onkeyup="formatAmt(event)" />
+			<input type="number" id="premium" onkeyup="calc()" />
 		</div>
 		<div class="num_field">
 			<label for="month">Month</label>
-			<span id="pofv" class="rofv">0</span>
-			<input type="number" name="month" id="month" value="" onkeyup="formatNum(event)" />
+			<span id="mfv" class="rofv">0</span>
+			<input type="number" id="month" onkeyup="calc()" />
 		</div>
 		<div class="num_field">
 			<label for="paata">Paata</label>
 			<span id="pfv" class="rofv">Rs. 0</span>
-			<input type="number" name="paata" id="paata" value="" onkeyup="formatAmt(event)" />
+			<input type="number" id="paata" onkeyup="calc()" />
 		</div>
 		<br />
 		<div class="num_field">
-			<label for="premium_fin">Premium <span>(Final)</span></label>
+			<label>Premium <span>(Final)</span></label>
 			<span id="prfv" class="rofv">Rs. 0</span>
 		</div>
 	</div>
