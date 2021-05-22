@@ -6,64 +6,94 @@
 	<meta property="og:title" content="Chitti Calculator">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style>
-	.main {
-		margin: 10px auto;
-		padding: 10px;
-		box-sizing: border-box;
-		max-width: 500px;
-	}
-	.numinput {
-		margin: 10px 0;
-		width: 100%;
-		box-sizing: border-box;
-	}
-	.numinput label {
-		margin: 2px;
-		width: 100%;
-	}
-	.numinput input {
-		width: 100%;
-		padding: 10px;
-		margin: 2px 0;
-		box-sizing: border-box;
-	}
-	.main button {
-		margin: 15px 0;
-		padding: 10px;
-		width: 98%;
-	}
+		.main {
+			margin: 10px auto;
+			padding: 10px;
+			box-sizing: border-box;
+			max-width: 500px;
+		}
+		.main h2 {
+			text-align: center;
+		}
+		.num_field {
+			margin: 10px 0;
+			width: 100%;
+			box-sizing: border-box;
+		}
+		.num_field label {
+			margin: 2px;
+			width: 100%;
+		}
+		.num_field label span {
+			font-style: italic;
+			font-size: 0.75em;
+		}
+		.rofv {
+			float: right;
+			display: inline-block;
+		}
+		.num_field input {
+			width: 100%;
+			padding: 10px;
+			margin: 2px 0;
+			box-sizing: border-box;
+		}
 	</style>
+	<script>
+		var premium, pofv;
+		var month, mfv;
+		var paata, pfv;
+		var prfv;
+		var toRupees;
+		function init(){
+			premium = document.getElementById("premium");
+			pofv = document.getElementById("pofv");
+			month = document.getElementById("month");
+			mfv = document.getElementById("mfv");
+			paata = document.getElementById("paata");
+			pfv = document.getElementById("pfv");
+			prfv = document.getElementById("prfv");
+			toRupees = Intl.NumberFormat("en-IN");
+		}
+		function calc() {
+			pov = Number(premium.value.replaceAll(/,/g,''));
+			mv = Number(month.value);
+			pv = Number(paata.value.replaceAll(/,/g,''));
+			prfv.innerText = "Rs. " + toRupees.format(pov - ((pov * 2) + pv) / (12 - mv));
+		}
+		function formatAmt(e) {
+			e.target.previousElementSibling.innerText = "Rs. " + toRupees.format(e.target.value.replace(/,/g,''));
+			calc();
+		}
+		function formatNum(e){
+			e.target.previousElementSibling.innerText = Number(e.target.value.replace(/,/g,''));
+			calc();
+		}
+	</script>
 </head>
-<body>
-    <div class="main">
-        <div class="numinput">
-            <label for="chitti">Chitti</label>
-            <input type="number" name="chitti" id="chitti" value="0" min="0" step="1" />
-        </div>
-        <div class="numinput">
-            <label for="iteration">Iteration</label>
-            <input type="number" name="iteration" id="iteration" value="1" min="1" step="1" max="11" />
-        </div>
-        <div class="numinput">
-            <label for="paata">Paata</label>
-            <input type="number" name="paata" id="paata" value="0" min="0" step="1" />
-        </div>
-	    <div class="numinput">
-            <input type="button" value="CALCULATE" onClick="calc()" />
-        </div>
-        <div class="numinput">
-            <label for="amount">Amount</label>
-            <input readonly id="amount" value="0">
-        </div>
-    </div>
+<body onload="init()">
+	<div class="main">
+		<h2>CHITTI CALCULATOR</h2>
+		<div class="num_field">
+			<label for="premium">Premium <span>(Original)</span></label>
+			<span id="pofv" class="rofv">Rs. 0</span>
+			<input type="number" name="premium" id="premium" onkeyup="formatAmt(event)" />
+		</div>
+		<div class="num_field">
+			<label for="month">Month</label>
+			<span id="pofv" class="rofv">0</span>
+			<input type="number" name="month" id="month" max="11" onkeyup="formatNum(event)" />
+		</div>
+		<div class="num_field">
+			<label for="paata">Paata</label>
+			<span id="pfv" class="rofv">Rs. 0</span>
+			<input type="number" name="paata" id="paata" onkeyup="formatAmt(event)" />
+		</div>
+		<br />
+		<div class="num_field">
+			<label for="premium_fin">Premium <span>(Final)</span></label>
+			<span id="prfv" class="rofv">Rs. 0</span>
+		</div>
+	</div>
 </body>
-<script>
-    function calc() {
-        var chitti = document.getElementById("chitti").valueAsNumber;
-        var iteration = document.getElementById("iteration").valueAsNumber;
-        var paata = document.getElementById("paata").valueAsNumber;
-        var amt = chitti - ((chitti * 2) + paata) / (12 - iteration);
-        document.getElementById("amount").value = amt;
-    }
-</script>
 </html>
