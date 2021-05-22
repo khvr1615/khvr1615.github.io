@@ -3,6 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<title>Essar Petrol Bunk</title>
+	<meta property="og:title" content="Essar Petrol Bunk">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style>
 		.main {
@@ -11,29 +12,31 @@
 			box-sizing: border-box;
 			max-width: 500px;
 		}
-		.numinput {
-			margin: 10px 0;
-			width: 100%;
-			box-sizing: border-box;
+		.main h2 {
+			text-align: center;
 		}
-		.numinput input {
+		.main .content {
+			font-weight: bold;
+			line-height: 1.25;
+			margin: 10px 0;
+		}
+		.main button {
 			width: 100%;
 			padding: 10px;
-			margin: 2px 0;
-			box-sizing: border-box;
+			margin: 10px 0;
+			font-weight: bold;
 		}
 	</style>
 </head>
 <body>
 	<div class="main">
-		<p>
+		<h2>ESSAR BUNK</h2>
+		<div class="content">
 			Essar Petrol Bunk <br />
 			Narasareddy Filling Station <br />
 			Rayapur Kandly, Lokeshwaram, Nirmal <br />
-		</p>
-		<div class="numinput">
-			<input type="button" value="PAY TO PETROL BUNK" onClick="pay()" />
 		</div>
+		<button onClick="pay()">PAY TO ESSAR BUNK</button>
 	</div>
 </body>
 <script>
