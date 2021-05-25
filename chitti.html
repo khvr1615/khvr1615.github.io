@@ -42,7 +42,7 @@
 		var premium, pofv;
 		var month, mfv;
 		var paata, pfv;
-		var prfv;
+		var prfv, rafv;
 		var toRupees;
 		function init(){
 			premium = document.getElementById("premium");
@@ -52,6 +52,7 @@
 			paata = document.getElementById("paata");
 			pfv = document.getElementById("pfv");
 			prfv = document.getElementById("prfv");
+			rafv = document.getElementById("rafv");
 			toRupees = Intl.NumberFormat("en-IN");
 			premium.value = "";
 			month.value = "";
@@ -61,10 +62,12 @@
 			var pov = Number(premium.value);
 			var mv = Number(month.value);
 			var pv = Number(paata.value);
+			var rav = ((pov * 2) + pv) / (12 - mv);
 			pofv.innerText = "Rs. " + toRupees.format(pov);
 			mfv.innerText = "" + mv;
 			pfv.innerText = "Rs. " + toRupees.format(pv);
-			prfv.innerText = "Rs. " + toRupees.format(pov - ((pov * 2) + pv) / (12 - mv));
+			prfv.innerText = "Rs. " + toRupees.format(pov-rav);
+			rafv.innerText = "Rs. " + toRupees.format(rav);
 		}
 	</script>
 </head>
@@ -90,6 +93,10 @@
 		<div class="num_field">
 			<label>Premium <span>(Final)</span></label>
 			<span id="prfv" class="rofv">Rs. 0</span>
+		</div>
+		<div class="num_field">
+			<label>Original - Final</label>
+			<span id="rafv" class="rofv">Rs. 0</span>
 		</div>
 	</div>
 </body>
