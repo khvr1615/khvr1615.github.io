@@ -7,13 +7,19 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style>
 		.main {
-			margin: 10px auto;
-			padding: 10px;
+			margin: 16px auto;
 			box-sizing: border-box;
 			max-width: 500px;
 		}
 		.main h2 {
 			text-align: center;
+		}
+		.box {
+			padding: 5px 10px;
+			box-sizing: border-box;
+			width: 100%;
+			box-shadow: 0 0 5px 2px #ccc;
+			border-radius: 5px;
 		}
 		.num_field {
 			margin: 10px 0;
@@ -23,15 +29,12 @@
 		.num_field label {
 			margin: 2px;
 		}
-		.num_field label span {
-			font-style: italic;
-			font-size: 0.75em;
-		}
-		.rofv {
+		.num_field span {
 			float: right;
 			display: block;
 		}
-		.num_field input {
+		.num_field input,
+		select {
 			width: 100%;
 			padding: 10px;
 			margin: 2px 0;
@@ -39,64 +42,95 @@
 		}
 	</style>
 	<script>
-		var premium, pofv;
-		var month, mfv;
-		var paata, pfv;
-		var prfv, rafv;
+		var chitti, chitti_span;
+		var month, month_span;
+		var paata, paata_span;
+		var chitti_ivvalsina, chitti_icchina, inka_ivvalsina;
 		var toRupees;
-		function init(){
-			premium = document.getElementById("premium");
-			pofv = document.getElementById("pofv");
+		function init() {
+			chitti = document.getElementById("chitti");
+			chitti_span = document.getElementById("chitti_span");
 			month = document.getElementById("month");
-			mfv = document.getElementById("mfv");
+			month_span = document.getElementById("month_span");
 			paata = document.getElementById("paata");
-			pfv = document.getElementById("pfv");
-			prfv = document.getElementById("prfv");
-			rafv = document.getElementById("rafv");
-			toRupees = Intl.NumberFormat("en-IN");
-			premium.value = "";
-			month.value = "";
-			paata.value = "";
+			paata_span = document.getElementById("paata_span");
+			chitti_ivvalsina = document.getElementById("chitti_ivvalsina");
+			chitti_icchina = document.getElementById("chitti_icchina");
+			inka_ivvalsina = document.getElementById("inka_ivvalsina");
+			toRupees = Intl.NumberFormat("en-IN", { maximumFractionDigits: 2 });
+			chitti.value = "1000000";
+			month.value = "1";
 		}
 		function calc() {
-			var pov = Number(premium.value);
-			var mv = Number(month.value);
-			var pv = Number(paata.value);
-			var rav = ((pov * 2) + pv) / (12 - mv);
-			pofv.innerText = "Rs. " + toRupees.format(pov);
-			mfv.innerText = "" + mv;
-			pfv.innerText = "Rs. " + toRupees.format(pv);
-			prfv.innerText = "Rs. " + toRupees.format(pov-rav);
-			rafv.innerText = "Rs. " + toRupees.format(rav);
+			var chitti_val = Number(chitti.value) / 10;
+			chitti_span.innerText = "Rs. " + toRupees.format(chitti_val);
+			var month_val = Number(month.value);
+			month_span.innerText = "" + month_val;
+			var paata_val = Number(paata.value);
+			paata_span.innerText = "Rs. " + toRupees.format(paata_val);
+			var tmp = ((chitti_val * 2) + paata_val) / (12 - month_val);
+			chitti_ivvalsina_span.innerText = "Rs. " + toRupees.format(chitti_val - tmp);
+			var chitti_icchina_val = Number(chitti_icchina.value);
+			chitti_icchina_span.innerText = "Rs. " + toRupees.format(chitti_icchina_val);
+			inka_ivvalsina_span.innerText = "Rs. " + toRupees.format(chitti_val - tmp - chitti_icchina_val);
 		}
 	</script>
 </head>
 <body onload="init()">
 	<div class="main">
 		<h2>CHITTI CALCULATOR</h2>
-		<div class="num_field">
-			<label for="premium">Premium <span>(Original)</span></label>
-			<span id="pofv" class="rofv">Rs. 0</span>
-			<input type="number" id="premium" onkeyup="calc()" />
-		</div>
-		<div class="num_field">
-			<label for="month">Month</label>
-			<span id="mfv" class="rofv">0</span>
-			<input type="number" id="month" onkeyup="calc()" />
-		</div>
-		<div class="num_field">
-			<label for="paata">Paata</label>
-			<span id="pfv" class="rofv">Rs. 0</span>
-			<input type="number" id="paata" onkeyup="calc()" />
+		<div class="box">
+			<div class="num_field">
+				<label for="chitti">చిట్టి రకం</label>
+				<select name="" id="chitti" onchange="calc()">
+					<option value="1000000">10 లక్షల చిట్టి</option>
+					<option value="500000">5 లక్షల చిట్టి</option>
+				</select>
+			</div>
+			<div class="num_field">
+				<label for="chitti_span">చిట్టి లేపిన వ్యక్తి ఇచ్చే సొమ్ము</label>
+				<span id="chitti_span">Rs. 1,00,000</span>
+			</div>
+			<hr />
+			<div class="num_field">
+				<label for="month">నెల</label>
+				<span id="month_span">1</span>
+				<select name="" id="month" onchange="calc()">
+					<option value="1">1</option>
+					<option value="2">2</option>
+					<option value="3">3</option>
+					<option value="4">4</option>
+					<option value="5">5</option>
+					<option value="6">6</option>
+					<option value="7">7</option>
+					<option value="8">8</option>
+					<option value="9">9</option>
+					<option value="10">10</option>
+					<option value="11">11</option>
+				</select>
+			</div>
 		</div>
 		<br />
-		<div class="num_field">
-			<label>Premium <span>(Final)</span></label>
-			<span id="prfv" class="rofv">Rs. 0</span>
-		</div>
-		<div class="num_field">
-			<label>Original - Final</label>
-			<span id="rafv" class="rofv">Rs. 0</span>
+		<div class="box">
+			<div class="num_field">
+				<label for="paata">చిట్టి పాట</label>
+				<span id="paata_span">Rs. 0</span>
+				<input type="number" id="paata" onkeyup="calc()" />
+			</div>
+			<div class="num_field">
+				<label for="chitti_ivvalsina_span">చిట్టి లేపని వ్యక్తి ఇవ్వాల్సిన సొమ్ము</label>
+				<span id="chitti_ivvalsina_span">Rs. 81,818</span>
+			</div>
+			<hr />
+			<div class="num_field">
+				<label for="chitti_icchina">చిట్టి లేపని వ్యక్తి ఇచ్చిన సొమ్ము</label>
+				<span id="chitti_icchina_span">Rs. 0</span>
+				<input type="number" id="chitti_icchina" onkeyup="calc()" />
+			</div>
+			<div class="num_field">
+				<label for="inka_ivvalsina">ఇంకా ఇవ్వాల్సిన సొమ్ము</label>
+				<span id="inka_ivvalsina_span">Rs. 81,818</span>
+			</div>
 		</div>
 	</div>
 </body>
