@@ -45,7 +45,8 @@
 		var chitti, chitti_span;
 		var month, month_span;
 		var paata, paata_span;
-		var chitti_ivvalsina, chitti_icchina, inka_ivvalsina;
+		var chitti_ivvalsina, icchina;
+		var ivvalsina, ravalsina;
 		var toRupees;
 		function init() {
 			chitti = document.getElementById("chitti");
@@ -55,8 +56,9 @@
 			paata = document.getElementById("paata");
 			paata_span = document.getElementById("paata_span");
 			chitti_ivvalsina = document.getElementById("chitti_ivvalsina");
-			chitti_icchina = document.getElementById("chitti_icchina");
-			inka_ivvalsina = document.getElementById("inka_ivvalsina");
+			icchina = document.getElementById("icchina");
+			ivvalsina = document.getElementById("ivvalsina");
+			ravalsina = document.getElementById("ravalsina");
 			toRupees = Intl.NumberFormat("en-IN", { maximumFractionDigits: 2 });
 			chitti.value = "1000000";
 			month.value = "1";
@@ -68,11 +70,13 @@
 			month_span.innerText = "" + month_val;
 			var paata_val = Number(paata.value);
 			paata_span.innerText = "Rs. " + toRupees.format(paata_val);
-			var tmp = ((chitti_val * 2) + paata_val) / (12 - month_val);
-			chitti_ivvalsina_span.innerText = "Rs. " + toRupees.format(chitti_val - tmp);
-			var chitti_icchina_val = Number(chitti_icchina.value);
-			chitti_icchina_span.innerText = "Rs. " + toRupees.format(chitti_icchina_val);
-			inka_ivvalsina_span.innerText = "Rs. " + toRupees.format(chitti_val - tmp - chitti_icchina_val);
+			var tmp1 = ((chitti_val * 2) + paata_val) / (12 - month_val);
+			chitti_ivvalsina_span.innerText = "Rs. " + toRupees.format(chitti_val - tmp1);
+			var icchina_val = Number(icchina.value);
+			icchina_span.innerText = "Rs. " + toRupees.format(icchina_val);
+			var tmp2 = chitti_val - tmp1 - icchina_val;
+			ivvalsina_span.innerText = "Rs. " + toRupees.format(Math.max(0, tmp2));
+			ravalsina_span.innerText = "Rs. " + toRupees.format(Math.max(0, -tmp2));
 		}
 	</script>
 </head>
@@ -88,7 +92,7 @@
 				</select>
 			</div>
 			<div class="num_field">
-				<label for="chitti_span">చిట్టి లేపిన వ్యక్తి ఇచ్చే సొమ్ము</label>
+				<label for="chitti_span">చిట్టి లేపిన వ్యక్తి(లు) ఇచ్చే సొమ్ము</label>
 				<span id="chitti_span">Rs. 1,00,000</span>
 			</div>
 			<hr />
@@ -118,18 +122,22 @@
 				<input type="number" id="paata" onkeyup="calc()" />
 			</div>
 			<div class="num_field">
-				<label for="chitti_ivvalsina_span">చిట్టి లేపని వ్యక్తి ఇవ్వాల్సిన సొమ్ము</label>
+				<label for="chitti_ivvalsina_span">చిట్టి లేపని వ్యక్తి(లు) ఇవ్వాల్సిన సొమ్ము</label>
 				<span id="chitti_ivvalsina_span">Rs. 81,818.18</span>
 			</div>
 			<hr />
 			<div class="num_field">
-				<label for="chitti_icchina">చిట్టి లేపని వ్యక్తి ఇచ్చిన సొమ్ము</label>
-				<span id="chitti_icchina_span">Rs. 0</span>
-				<input type="number" id="chitti_icchina" onkeyup="calc()" />
+				<label for="icchina">ఇచ్చిన సొమ్ము</label>
+				<span id="icchina_span">Rs. 0</span>
+				<input type="number" id="icchina" onkeyup="calc()" />
 			</div>
 			<div class="num_field">
-				<label for="inka_ivvalsina">ఇంకా ఇవ్వాల్సిన సొమ్ము</label>
-				<span id="inka_ivvalsina_span">Rs. 81,818.18</span>
+				<label for="ivvalsina">ఇవ్వాల్సిన సొమ్ము</label>
+				<span id="ivvalsina_span">Rs. 81,818.18</span>
+			</div>
+			<div class="num_field">
+				<label for="ravalsina">రావాల్సిన సొమ్ము</label>
+				<span id="ravalsina_span">Rs. 0</span>
 			</div>
 		</div>
 	</div>
