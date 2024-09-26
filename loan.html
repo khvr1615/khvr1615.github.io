@@ -72,9 +72,9 @@
 			var interest_amount_val = total_amount_val-loan_amount_val;
 			interest_amount_span.innerText = "Rs. " + toRupees.format(interest_amount_val);
 			var interest_pm_val = ((interest_amount_val)/(loan_amount_val*tenure_val))*100;
-			interest_pm_span.innerText = "Rs. " + toRupees.format(interest_pm_val) + " ps";
+			interest_pm_span.innerText = "Rs. " + toRupees.format(interest_pm_val);
 			var interest_pa_val = interest_pm_val*12;
-			interest_pa_span.innerText = "Rs. " + toRupees.format(interest_pa_val) + " ps";
+			interest_pa_span.innerText = "Rs. " + toRupees.format(interest_pa_val);
 		}
 	</script>
 </head>
