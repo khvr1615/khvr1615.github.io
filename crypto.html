@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Crypto Tools</title>
+	<meta property="og:title" content="Crypto Tools">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		.main {
+			margin: 16px auto;
+			box-sizing: border-box;
+			min-width: 320px;
+		}
+		.main h2 {
+			text-align: center;
+		}
+		.section {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: 16px;
+		}
+		.box {
+			margin: 16px 0;
+			padding: 5px 10px;
+			box-sizing: border-box;
+			width: 100%;
+			max-width: 480px;
+			box-shadow: 0 0 5px 2px #ccc;
+			border-radius: 5px;
+			flex: 1;
+		}
+		.num_field {
+			margin: 10px 0;
+			width: 100%;
+			box-sizing: border-box;
+			position: relative;
+		}
+		.num_field label {
+			margin: 2px;
+		}
+		.num_field .float-right {
+			position: absolute;
+			right: 0;
+			top: 0;
+		}
+		.num_field input,
+		.num_field textarea {
+			width: 100%;
+			padding: 8px;
+			margin: 2px 0;
+			box-sizing: border-box;
+		}
+		.num_field textarea {
+			resize: vertical;
+		}
+		.num_field input[type="button"] {
+			font-weight: bold;
+		}
+		input[type="checkbox"] {
+			margin: 0 4px;
+			vertical-align: middle;
+			width: auto;
+		}
+		@media (min-width: 768px) {
+			.section {
+				flex-direction: row;
+			}
+		}
+	</style>
+	<script>
+		var enc_ptext, enc_pwd, enc_ctext;
+		var dec_ptext, dec_pwd, dec_ctext;
+		const encoder = new TextEncoder();
+		const decoder = new TextDecoder();
+		const aesGcm = {
+			name: "AES-GCM",
+			iv: encoder.encode("kopelahrsvdn")
+		}
+		const err_msg = "[INCORRECT_INPUT]";
+		function init() {
+			if (!window.crypto || !crypto.subtle) {
+				alert("Your browser does not support the SubtleCrypto API.");
+				return;
+			}
+			enc_ptext = document.getElementById("enc_ptext");
+			enc_pwd = document.getElementById("enc_pwd");
+			enc_ctext = document.getElementById("enc_ctext");
+			dec_ptext = document.getElementById("dec_ptext");
+			dec_pwd = document.getElementById("dec_pwd");
+			dec_ctext = document.getElementById("dec_ctext");
+		}
+		function doEnc(){
+			const pt = enc_ptext.value.trim();
+			const pwd = enc_pwd.value.trim();
+			if(pt != "" && pwd != ""){
+				h_encrypt(pt, pwd).then( (ct) => {
+					enc_ctext.value = ct;
+				} ).catch( (err) => {
+					enc_ctext.value = err_msg;
+				})
+			}else{
+				enc_ctext.value = "";
+			}
+			// enc_ptext.style.height = 'auto';
+			// enc_ptext.style.height = enc_ptext.scrollHeight + 2 + 'px';
+		}
+		function doDec(){
+			const ct = dec_ctext.value.trim();
+			const pwd = dec_pwd.value.trim();
+			if(ct != "" && pwd != ""){
+				h_decrypt(ct, pwd).then( (pt) => {
+					dec_ptext.value = pt;
+				} ).catch( (err) => {
+					dec_ptext.value = err_msg;
+				})
+			}else{
+				dec_ptext.value = "";
+			}
+		}
+		function enc_pwd_toggle(){
+			if(enc_pwd.type == 'password'){
+				enc_pwd.type = 'text';
+			}else{
+				enc_pwd.type = 'password';
+			}
+		}
+		function dec_pwd_toggle(){
+			if(dec_pwd.type == 'password'){
+				dec_pwd.type = 'text';
+			}else{
+				dec_pwd.type = 'password';
+			}
+		}
+		async function h_key(password) {
+			const keyMaterial = await crypto.subtle.importKey(
+				"raw",
+				encoder.encode(password),
+				"PBKDF2",
+				false,
+				["deriveKey"]
+			);
+			return await crypto.subtle.deriveKey(
+				{
+					name: "PBKDF2",
+					salt: new Uint8Array(0),
+					iterations: 100000,
+					hash: "SHA-256",
+				},
+				keyMaterial,
+				{
+					name: "AES-GCM",
+					length: 256,
+				},
+				false,
+				["encrypt", "decrypt"]
+			);
+		}
+		function h_atob(ad){
+			const bd = atob(ad);
+			const bdb = new Uint8Array(bd.length);
+			for(var i = 0; i<bd.length; i++){
+				bdb[i] = bd.charCodeAt(i);
+			}
+			return bdb;
+		}
+		async function h_decrypt(ct, pwd){
+			const key = await h_key(pwd);
+			const ct_arr = h_atob(ct);
+			const encodedPt = await crypto.subtle.decrypt(aesGcm, key, ct_arr);
+			const pt = decoder.decode(encodedPt);
+			return pt;
+		}
+		function h_btoa(b){
+			var ad = btoa(String.fromCharCode(...new Uint8Array(b)));
+			return ad;
+		}
+		async function h_encrypt(pt, pwd){
+			const key = await h_key(pwd);
+			const encodedPt = encoder.encode(pt);
+			const ct = await crypto.subtle.encrypt(aesGcm, key, encodedPt)
+			return h_btoa(ct);
+		}
+	</script>
+</head>
+<body onload="init()">
+	<div class="main">
+		<h2>CRYPTO TOOLS</h2>
+		<div class="section">
+		<div class="box">
+			<h3>ENCRYPT TEXT</h3>
+			<div class="num_field">
+				<label for="enc_ptext">Enter Text to Encrypt</label>
+				<textarea id="enc_ptext" rows="5" oninput="doEnc()"></textarea>
+			</div>
+			<div class="num_field">
+				<label for="enc_pwd">Password</label>
+				<input type="password" id="enc_pwd" oninput="doEnc()" />
+				<span class="float-right">
+					<input type="checkbox" onclick="enc_pwd_toggle()"/>
+					show
+				</span>
+			</div>
+			<div class="num_field">
+				<label for="enc_ctext">Encrypted Text</label>
+				<textarea id="enc_ctext" rows="5" readonly></textarea>
+			</div>
+		</div>
+		<div class="box">
+			<h3>DECRYPT TEXT</h3>
+			<div class="num_field">
+				<label for="dec_ctext">Enter Encrypted Text</label>
+				<textarea id="dec_ctext" rows="5" oninput="doDec()"></textarea>
+			</div>
+			<div class="num_field">
+				<label for="dec_pwd">Password</label>
+				<input type="password" id="dec_pwd" oninput="doDec()" />
+				<span class="float-right">
+					<input type="checkbox" onclick="dec_pwd_toggle()"/>
+					show
+				</span>
+			</div>
+			<div class="num_field">
+				<label for="dec_ptext">Decrypted Text</label>
+				<textarea id="dec_ptext" rows="5" readonly></textarea>
+			</div>
+		</div>
+	</div>
+	</div>
+</body>
+</html>
