@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>EMI Tools</title>
+	<meta property="og:title" content="EMI Tools">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		.main {
+			margin: 16px auto;
+			box-sizing: border-box;
+			min-width: 320px;
+		}
+		.main h2 {
+			text-align: center;
+		}
+		.section {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: 16px;
+		}
+		.box {
+			margin: 16px 0;
+			padding: 5px 10px;
+			box-sizing: border-box;
+			width: 100%;
+			max-width: 480px;
+			box-shadow: 0 0 5px 2px #ccc;
+			border-radius: 5px;
+			flex: 1;
+		}
+		.num_field {
+			margin: 10px 0;
+			width: 100%;
+			box-sizing: border-box;
+			position: relative;
+		}
+		.num_field label {
+			margin: 2px;
+		}
+		.num_field span {
+			float: right;
+			display: block;
+		}
+		.num_field input {
+			width: 100%;
+			padding: 10px;
+			margin: 2px 0;
+			box-sizing: border-box;
+		}
+		.radio {
+			display: inline;
+		}
+		input[type="radio"] {
+			margin-left: 8px;
+			vertical-align: middle;
+			width: auto;
+		}
+		@media (min-width: 768px) {
+			.section {
+				flex-direction: row;
+			}
+		}
+	</style>
+	<script>
+		var a_loan_amount, a_loan_amount_span;
+		var a_interest_bank, a_interest_bank_span;
+		var a_tenure, a_tenure_span, a_tenure_units;
+		var a_emi_amount, a_total_amount, a_interest_amount;
+		var a_interest_pm, a_interest_pa;
+
+		var i_loan_amount, i_loan_amount_span;
+		var i_emi_amount, i_emi_amount_span;
+		var i_tenure, i_tenure_span, i_tenure_units;
+		var i_total_amount, i_interest_amount;
+		var i_interest_pm, i_interest_pa, i_interest_bank;
+
+		var toRupees;
+		function init() {
+			a_loan_amount = document.getElementById("a_loan_amount");
+			a_loan_amount_span = document.getElementById("a_loan_amount_span");
+			a_interest_bank = document.getElementById("a_interest_bank");
+			a_interest_bank_span = document.getElementById("a_interest_bank_span");
+			a_tenure = document.getElementById("a_tenure");
+			a_tenure_span = document.getElementById("a_tenure_span");
+			a_tenure_units = document.getElementById("a_tenure_units").elements["a_tenure_units"];
+			a_emi_amount = document.getElementById("a_emi_amount");
+			a_total_amount = document.getElementById("a_total_amount");
+			a_interest_amount = document.getElementById("a_interest_amount");
+			a_interest_pm = document.getElementById("a_interest_pm");
+			a_interest_pa = document.getElementById("a_interest_pa");
+
+			i_loan_amount = document.getElementById("i_loan_amount");
+			i_loan_amount_span = document.getElementById("i_loan_amount_span");
+			i_emi_amount = document.getElementById("i_emi_amount");
+			i_emi_amount_span = document.getElementById("i_emi_amount_span");
+			i_tenure = document.getElementById("i_tenure");
+			i_tenure_span = document.getElementById("i_tenure_span");
+			i_tenure_units = document.getElementById("i_tenure_units").elements["i_tenure_units"];
+			i_total_amount = document.getElementById("i_total_amount");
+			i_interest_amount = document.getElementById("i_interest_amount");
+			i_interest_pm = document.getElementById("i_interest_pm");
+			i_interest_pa = document.getElementById("i_interest_pa");
+			i_interest_bank = document.getElementById("i_interest_bank");
+
+			toRupees = Intl.NumberFormat("en-IN", { maximumFractionDigits: 2 });
+		}
+		function calc_a() {
+			var a_loan_amount_val = Number(a_loan_amount.value);
+			a_loan_amount_span.innerText = "Rs. " + toRupees.format(a_loan_amount_val);
+			var a_interest_bank_val = Number(a_interest_bank.value);
+			a_interest_bank_span.innerText = "" + toRupees.format(a_interest_bank_val) + "%";
+			var a_tenure_val = Number(a_tenure.value);
+			a_tenure_span.innerText = "" + a_tenure_val + " " + a_tenure_units.value;
+			var a_tenure_unit_multiplier = a_tenure_units.value == "months" ? 1 : 12;
+			var a_tenure_in_months = a_tenure_val * a_tenure_unit_multiplier;
+			var a_emi_amount_val = (a_loan_amount_val * a_interest_bank_val / 1200 * Math.pow(1+a_interest_bank_val/1200, a_tenure_in_months)/(Math.pow(1+a_interest_bank_val/1200, a_tenure_in_months)-1));
+			a_emi_amount.innerText = "Rs. " + toRupees.format(a_emi_amount_val);
+			var a_total_amount_val = a_emi_amount_val*a_tenure_in_months;
+			a_total_amount.innerText = "Rs. " + toRupees.format(a_total_amount_val);
+			var a_interest_amount_val = a_total_amount_val-a_loan_amount_val;
+			a_interest_amount.innerText = "Rs. " + toRupees.format(a_interest_amount_val);
+			var a_interest_pm_val = ((a_interest_amount_val)/(a_loan_amount_val*a_tenure_in_months))*100;
+			a_interest_pm.innerText = "Rs. " + toRupees.format(a_interest_pm_val);
+			var a_interest_pa_val = a_interest_pm_val*12;
+			a_interest_pa.innerText = "Rs. " + toRupees.format(a_interest_pa_val);
+		}
+		function calculateInterestRate(P, EMI, n) {
+			let r = 0.01; // Starting with a 1% monthly interest rate
+			const tolerance = 1e-2; // Tolerance level for convergence
+			const maxIterations = 1000; // Maximum number of iterations allowed
+			let iteration = 0;
+			
+			// Iterative Newton-Raphson method to solve for r
+			while (iteration < maxIterations) {
+				iteration++;
+				const currentEMI = (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+				const diff = currentEMI - EMI;
+				if (Math.abs(diff) < tolerance) {
+					return r * 12 * 100;
+				}
+				const f_prime = (P * Math.pow(1 + r, n) * (Math.pow(1 + r, n) - 1) + P * r * n * Math.pow(1 + r, n - 1)) / Math.pow(Math.pow(1 + r, n) - 1, 2);
+				r = r - diff / f_prime;
+			}
+			
+			return NaN;
+		}
+		function calc_i() {
+			var i_loan_amount_val = Number(i_loan_amount.value);
+			i_loan_amount_span.innerText = "Rs. " + toRupees.format(i_loan_amount_val);
+			var i_emi_amount_val = Number(i_emi_amount.value);
+			i_emi_amount_span.innerText = "Rs. " + toRupees.format(i_emi_amount_val);
+			var i_tenure_val = Number(i_tenure.value);
+			i_tenure_span.innerText = "" + i_tenure_val + " " + i_tenure_units.value;
+			var i_tenure_unit_multiplier = i_tenure_units.value == "months" ? 1 : 12;
+			var i_tenure_in_months = i_tenure_val * i_tenure_unit_multiplier;
+			
+			var i_total_amount_val = i_emi_amount_val*i_tenure_in_months;
+			i_total_amount.innerText = "Rs. " + toRupees.format(i_total_amount_val);
+			var i_interest_amount_val = i_total_amount_val-i_loan_amount_val;
+			i_interest_amount.innerText = "Rs. " + toRupees.format(i_interest_amount_val);
+			var i_interest_pm_val = ((i_interest_amount_val)/(i_loan_amount_val*i_tenure_in_months))*100;
+			i_interest_pm.innerText = "Rs. " + toRupees.format(i_interest_pm_val);
+			var i_interest_pa_val = i_interest_pm_val*12;
+			i_interest_pa.innerText = "Rs. " + toRupees.format(i_interest_pa_val);
+			var i_interest_bank_val = calculateInterestRate(i_loan_amount_val, i_emi_amount_val, i_tenure_in_months);
+			i_interest_bank.innerText = i_interest_bank_val.toFixed(2) + "%";
+		}
+	</script>
+</head>
+<body onload="init()">
+	<div class="main">
+		<h2>EMI TOOLS</h2>
+		<div class="section">
+			<div class="box">
+				<h3>EMI AMOUNT CALCULATOR</h3>
+				<div class="num_field">
+					<label for="a_loan_amount">loan_amount</label>
+					<span id="a_loan_amount_span">Rs. 0</span>
+					<input type="number" id="a_loan_amount" oninput="calc_a()" />
+				</div>
+				<div class="num_field">
+					<label for="a_interest_bank">interest (bank)</label>
+					<span id="a_interest_bank_span">0%</span>
+					<input type="number" id="a_interest_bank" oninput="calc_a()" />
+				</div>
+				<div class="num_field">
+					<label for="a_tenure">tenure</label>
+					<form class="radio" id="a_tenure_units">
+						<label>
+							<input type="radio" name="a_tenure_units" value="months" onclick="calc_a()" /> months
+						</label>
+						<label>
+							<input type="radio" name="a_tenure_units" value="years" onclick="calc_a()" checked /> years
+						</label>
+					</form>
+					<span id="a_tenure_span">0 years</span>
+					<input type="number" id="a_tenure" oninput="calc_a()" />
+				</div>
+				<hr />
+				<div class="num_field">
+					<label for="a_emi_amount">emi_amount</label>
+					<span id="a_emi_amount">Rs. 0.00</span>
+				</div>
+				<div class="num_field">
+					<label for="a_total_amount">total_amount</label>
+					<span id="a_total_amount">Rs. 0.00</span>
+				</div>
+				<div class="num_field">
+					<label for="a_interest_amount">interest_amount</label>
+					<span id="a_interest_amount">Rs. 0.00</span>
+				</div>
+				<div class="num_field">
+					<label for="a_interest_pm">interest (per month)</label>
+					<span id="a_interest_pm">Rs. 0.00</span>
+				</div>
+				<div class="num_field">
+					<label for="a_interest_pa">interest (per annum)</label>
+					<span id="a_interest_pa">Rs. 0.00</span>
+				</div>
+			</div>
+			<div class="box">
+				<h3>EMI INTEREST CALCULATOR</h3>
+				<div class="num_field">
+					<label for="i_loan_amount">loan_amount</label>
+					<span id="i_loan_amount_span">Rs. 0</span>
+					<input type="number" id="i_loan_amount" oninput="calc_i()" />
+				</div>
+				<div class="num_field">
+					<label for="i_emi_amount">emi_amount</label>
+					<span id="i_emi_amount_span">Rs. 0</span>
+					<input type="number" id="i_emi_amount" oninput="calc_i()" />
+				</div>
+				<div class="num_field">
+					<label for="i_tenure">tenure</label>
+					<form class="radio" id="i_tenure_units">
+						<label>
+							<input type="radio" name="i_tenure_units" value="months" onclick="calc_i()" /> months
+						</label>
+						<label>
+							<input type="radio" name="i_tenure_units" value="years" onclick="calc_i()" checked /> years
+						</label>
+					</form>
+					<span id="i_tenure_span">0 years</span>
+					<input type="number" id="i_tenure" oninput="calc_i()" />
+				</div>
+				<hr />
+				<div class="num_field">
+					<label for="i_interest_bank">interest (bank)</label>
+					<span id="i_interest_bank">0%</span>
+				</div>
+				<div class="num_field">
+					<label for="i_total_amount">total_amount</label>
+					<span id="i_total_amount">Rs. 0.00</span>
+				</div>
+					<div class="num_field">
+					<label for="i_interest_amount">interest_amount</label>
+					<span id="i_interest_amount">Rs. 0.00</span>
+				</div>
+				<div class="num_field">
+					<label for="i_interest_pm">interest (per month)</label>
+					<span id="i_interest_pm">Rs. 0.00</span>
+				</div>
+				<div class="num_field">
+					<label for="i_interest_pa">interest (per annum)</label>
+					<span id="i_interest_pa">Rs. 0.00</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
