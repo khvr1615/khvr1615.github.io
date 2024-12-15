@@ -128,21 +128,24 @@
 			a_interest_pa.innerText = "Rs. " + toRupees.format(a_interest_pa_val);
 		}
 		function calculateInterestRate(P, EMI, n) {
-			let r = 0.01; // Starting with a 1% monthly interest rate
+			let r = 1e-2; // Starting with a 1% monthly interest rate
 			const tolerance = 1e-2; // Tolerance level for convergence
-			const maxIterations = 1000; // Maximum number of iterations allowed
+			const maxIterations = 200000; // Maximum number of iterations allowed
 			let iteration = 0;
 			
 			// Iterative Newton-Raphson method to solve for r
 			while (iteration < maxIterations) {
 				iteration++;
-				const currentEMI = (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+				let pwl = Math.pow(1 + r, n - 1);
+				let pw = pwl * (1 + r);
+				let dn = pw - 1;
+				const currentEMI = (P * r * pw) / dn;
 				const diff = currentEMI - EMI;
-				if (Math.abs(diff) < tolerance) {
+				if (Math.abs(diff) <= tolerance) {
 					return r * 12 * 100;
 				}
-				const f_prime = (P * Math.pow(1 + r, n) * (Math.pow(1 + r, n) - 1) + P * r * n * Math.pow(1 + r, n - 1)) / Math.pow(Math.pow(1 + r, n) - 1, 2);
-				r = r - diff / f_prime;
+				const f_prime = (P * pw * dn + P * r * n * pwl) / (dn * dn);
+				r -= diff / f_prime;
 			}
 			
 			return NaN;
